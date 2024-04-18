@@ -18,15 +18,13 @@ from datetime import datetime
 from bs4 import BeautifulSoup
 from Known_Sites import TEMPORARY_DOMAIN_PLATFORMS
 import os
-from dotenv import load_dotenv
+# from dotenv import load_dotenv
 from supabase import create_client
 
-# Load environment variables from .env file
-load_dotenv()
 
 # Initialize Supabase client
-supabase_url = os.getenv("SUPABASE_URL")
-supabase_key = os.getenv("SUPABASE_KEY")
+supabase_url = 'https://lppirbtjtgdodlxunrjq.supabase.co'
+supabase_key = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxwcGlyYnRqdGdkb2RseHVucmpxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDQzODUzOTUsImV4cCI6MjAxOTk2MTM5NX0.t6vGaoT92qCJ6ePtl_6RqKpVxKEGw3CVTaqxO92C6i0'
 supabase = create_client(supabase_url, supabase_key)
 # ------------------------------------------------------
 
