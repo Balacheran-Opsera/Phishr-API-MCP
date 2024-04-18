@@ -17,17 +17,17 @@ import whois
 from datetime import datetime
 from bs4 import BeautifulSoup
 from Known_Sites import TEMPORARY_DOMAIN_PLATFORMS
-import firebase_admin
-from firebase_admin import firestore
-from firebase_admin import credentials
+import os
+from dotenv import load_dotenv
+from supabase import create_client
 
-# Firebase Private Key
-PRIVATE_KEY_PATH = "firebase/phishr-d74a9-firebase-adminsdk-vcpiv-0328924687.json"
-cred = credentials.Certificate(PRIVATE_KEY_PATH)
-firebase_admin.initialize_app(cred)
-# Create a Firestore client
-db = firestore.client()
+# Load environment variables from .env file
+load_dotenv()
 
+# Initialize Supabase client
+supabase_url = os.getenv("SUPABASE_URL")
+supabase_key = os.getenv("SUPABASE_KEY")
+supabase = create_client(supabase_url, supabase_key)
 # ------------------------------------------------------
 
 # Check if URL is https
@@ -658,22 +658,20 @@ def getTypoSquattedDomains(domain,max_num=20):
 # Check if URL exists in 'Reported_Urls' & 'Bulk_Reported_Urls' collections
 def url_in_reporting_database(url):
 
-    # Check "Reported_Urls" collection
-    reported_urls_query = db.collection(
-        'Reported_Urls').where("Url", "==", url)
-    reported_urls_docs = reported_urls_query.stream()
+    # Check "Reported_Urls" table
+    reported_urls_query = supabase.from_("Reported_Urls").select("*").eq("Url", url)
+    reported_urls_response = reported_urls_query.execute()
 
-    # Check "Bulk_Reported_Urls" collection
-    bulk_reported_urls_query = db.collection(
-        'Bulk_Reported_Urls').where("Url", "==", url)
-    bulk_reported_urls_docs = bulk_reported_urls_query.stream()
+    # Check "Bulk_Reported_Urls" table
+    bulk_reported_urls_query = supabase.from_("Bulk_Reported_Urls").select("*").eq("Url", url)
+    bulk_reported_urls_response = bulk_reported_urls_query.execute()
 
-    # Check if any matching documents exist in "Reported_Urls" collection
-    if len(list(reported_urls_docs)) > 0:
+    # Check if any matching records exist in "Reported_Urls" table
+    if len(reported_urls_response["data"]) > 0:
         return True
 
-    # Check if any matching documents exist in "Bulk_Reported_Urls" collection
-    if len(list(bulk_reported_urls_docs)) > 0:
+    # Check if any matching records exist in "Bulk_Reported_Urls" table
+    if len(bulk_reported_urls_response["data"]) > 0:
         return True
 
     return False
