@@ -1,0 +1,74 @@
+swagger: "2.0"
+info:
+  title: Phishr API
+  description: A cybersecurity API that predicts whether a URL is potentially malicious using machine learning.
+  version: 1.0.0
+  contact:
+    name: Phishr Developer
+    url: https://github.com/Balacheran/Phishr-API
+host: phishr-api-tyk7.onrender.com
+basePath: /
+schemes:
+  - https
+consumes:
+  - application/json
+produces:
+  - application/json
+paths:
+  /predict:
+    post:
+      summary: Predict if a URL is malicious
+      description: Takes a URL and returns various prediction features and the malicious score.
+      parameters:
+        - in: body
+          name: body
+          description: URL to analyze
+          required: true
+          schema:
+            type: object
+            properties:
+              url:
+                type: string
+                example: "www.google.com"
+      responses:
+        200:
+          description: Successful prediction
+          schema:
+            type: object
+            properties:
+              prediction:
+                type: object
+                properties:
+                  SCORE:
+                    type: integer
+                    example: 180
+                  InTop1Million:
+                    type: boolean
+                  InURLVoidBlackList:
+                    type: boolean
+                  isHTTPS:
+                    type: boolean
+                  hasSSLCertificate:
+                    type: boolean
+                  GoogleSafePassed:
+                    type: boolean
+                  NortanWebSafePassed:
+                    type: boolean
+                  InMcaffeBlackList:
+                    type: boolean
+                  InSucuriBlacklist:
+                    type: boolean
+                  isTemporaryDomain:
+                    type: boolean
+                  isOlderThan3Months:
+                    type: boolean
+                  isBlackListedinIpSets:
+                    type: boolean
+                  target_urls:
+                    type: array
+                    items:
+                      type: string
+        400:
+          description: Invalid input
+        500:
+          description: Server error
